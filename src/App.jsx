@@ -10,6 +10,8 @@ import TrendingProducts from "./components/TrendingProducts";
 import PromoSection from "./components/PromoSection";
 import PopularCategories from "./components/PopularCategories";
 import FeatureHighlights from "./components/FeatureHighlights";
+import CustomerTestimonials from "./components/CustomerTestimonials";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
       <PromoSection />
       <PopularCategories />
       <FeatureHighlights />
+      <CustomerTestimonials />
+      <Footer />
 
       {/* Add Routes or HomePage below */}
     </>
