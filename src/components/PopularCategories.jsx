@@ -37,9 +37,9 @@ const PopularCategories = () => {
       <Swiper
         modules={[Navigation]}
         spaceBetween={16}
-        slidesPerView={2}
+        slidesPerView={1}
         breakpoints={{
-          640: { slidesPerView: 2 },
+          640: { slidesPerView: 1 },
           768: { slidesPerView: 3 },
           1024: { slidesPerView: 4 },
         }}

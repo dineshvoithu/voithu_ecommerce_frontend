@@ -9,6 +9,7 @@ import Marquee from "./components/Marquee";
 import TrendingProducts from "./components/TrendingProducts";
 import PromoSection from "./components/PromoSection";
 import PopularCategories from "./components/PopularCategories";
+import FeatureHighlights from "./components/FeatureHighlights";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <TrendingProducts />
       <PromoSection />
       <PopularCategories />
+      <FeatureHighlights />
 
       {/* Add Routes or HomePage below */}
     </>
