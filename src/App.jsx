@@ -8,6 +8,7 @@ import Categories from "./sections/Categories";
 import Marquee from "./components/Marquee";
 import TrendingProducts from "./components/TrendingProducts";
 import PromoSection from "./components/PromoSection";
+import PopularCategories from "./components/PopularCategories";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Categories />
       <TrendingProducts />
       <PromoSection />
+      <PopularCategories />
 
       {/* Add Routes or HomePage below */}
     </>
