@@ -7,6 +7,7 @@ import Hero from "./components/Hero";
 import Categories from "./sections/Categories";
 import Marquee from "./components/Marquee";
 import TrendingProducts from "./components/TrendingProducts";
+import PromoSection from "./components/PromoSection";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Marquee />
       <Categories />
       <TrendingProducts />
+      <PromoSection />
 
       {/* Add Routes or HomePage below */}
     </>
