@@ -34,7 +34,7 @@ const products = [
 
 const TrendingProducts = () => {
   return (
-    <div className="px-4 py-8 bg-gray-100 pt-[80px] pb-[60px]">
+    <div className="px-4 py-8 bg-gray-100 pt-[80px] pb-[80px]">
       <h2 className="text-2xl font-bold mb-4 poppins-500">Trending Products</h2>
       <p className="text-[#545454] mb-10">
         Explore our most popular pieces that customers can't get enough of

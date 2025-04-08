@@ -1,47 +1,42 @@
+// src/components/FeatureHighlights.jsx
+
 import React from "react";
-import { Truck, Gift, RotateCcw, ShieldCheck } from "lucide-react";
+import { Truck, Gift, RefreshCcw, ShieldCheck } from "lucide-react";
 
 const features = [
   {
     id: 1,
-    icon: <Truck size={28} className="text-blue-600" />,
     title: "Free Shipping",
-    desc: "On orders over ₹999",
+    icon: <Truck size={32} className="text-blue-600" />,
   },
   {
     id: 2,
-    icon: <Gift size={28} className="text-pink-600" />,
     title: "Gift Package",
-    desc: "Perfect for your loved ones",
+    icon: <Gift size={32} className="text-pink-500" />,
   },
   {
     id: 3,
-    icon: <RotateCcw size={28} className="text-green-600" />,
     title: "Easy Returns",
-    desc: "Hassle-free 7-day returns",
+    icon: <RefreshCcw size={32} className="text-green-500" />,
   },
   {
     id: 4,
-    icon: <ShieldCheck size={28} className="text-purple-600" />,
     title: "1 Year Warranty",
-    desc: "On selected products",
+    icon: <ShieldCheck size={32} className="text-purple-600" />,
   },
 ];
 
 const FeatureHighlights = () => {
   return (
-    <div className="py-10 px-4 bg-[#f9f9f9]">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="py-10 px-4 bg-gray-50">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
         {features.map((feature) => (
           <div
             key={feature.id}
-            className="flex items-center gap-4 p-4 bg-white rounded-xl shadow hover:shadow-md transition"
+            className="flex flex-col items-center gap-3 bg-white p-6 rounded-xl shadow hover:shadow-md transition"
           >
-            <div>{feature.icon}</div>
-            <div>
-              <h4 className="font-semibold text-lg">{feature.title}</h4>
-              <p className="text-sm text-gray-500">{feature.desc}</p>
-            </div>
+            {feature.icon}
+            <h3 className="text-lg font-medium">{feature.title}</h3>
           </div>
         ))}
       </div>

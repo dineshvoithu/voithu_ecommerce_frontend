@@ -16,7 +16,7 @@ const categories = [
 
 const PopularCategories = () => {
   return (
-    <div className="px-4 py-8 bg-gray-100 pt-[80px] pb-[60px] relative">
+    <div className="px-4 py-8 bg-gray-100 pt-[80px] pb-[80px] relative">
       <h2 className="text-2xl font-bold mb-4 poppins-500">
         Popular Categories
       </h2>
