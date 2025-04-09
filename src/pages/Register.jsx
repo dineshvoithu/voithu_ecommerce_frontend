@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +11,8 @@ const Register = () => {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -15,18 +20,81 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    const { name, email, password } = formData;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (name.length < 3) {
+      toast.error("Name must be at least 3 characters");
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Registering user:", formData);
-    // Later: Call your backend API here
+    if (!validate()) return;
+
+    const payload = {
+      ...formData,
+      role: "ROLE_CUSTOMER",
+    };
+
+    try {
+      console.log("Sending registration data:", payload);
+      const response = await axios.post(
+        "http://localhost:8080/api/users/register/customer",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const { token, role } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
+      toast.success("Registration successful!");
+
+      setFormData({ name: "", email: "", password: "" });
+
+      setTimeout(() => {
+        navigate("/"); // or "/customer-dashboard"
+      }, 1500);
+    } catch (error) {
+      console.error("Registration Error:", error.response || error.message);
+      toast.error(
+        error.response?.data?.message || "Registration failed. Try again!"
+      );
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+      <ToastContainer />
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md relative">
+        <Link
+          to="/"
+          className="absolute top-2 right-2 text-xl hover:text-red-500 transition"
+        >
+          ✖
+        </Link>
+
         <h2 className="text-2xl font-bold mb-6 text-center">
           Create an Account
         </h2>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -34,7 +102,6 @@ const Register = () => {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 border rounded-md"
           />
           <input
@@ -43,7 +110,6 @@ const Register = () => {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 border rounded-md"
           />
           <input
@@ -52,7 +118,6 @@ const Register = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 border rounded-md"
           />
           <button
@@ -62,6 +127,7 @@ const Register = () => {
             Register
           </button>
         </form>
+
         <p className="text-sm text-center mt-4">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
