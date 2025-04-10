@@ -1,7 +1,16 @@
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const userData = localStorage.getItem("user");
+  let user = null;
+
+  try {
+    user = userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error("Invalid user JSON:", error);
+    localStorage.removeItem("user"); // Clean up bad data
+    return <Navigate to="/login" />;
+  }
 
   if (!user) return <Navigate to="/login" />;
 

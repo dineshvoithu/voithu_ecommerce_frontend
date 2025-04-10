@@ -30,6 +30,7 @@ const SellerModal = ({ onClose }) => {
       toast.error("Enter a valid email");
       return;
     }
+
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters");
       return;
@@ -41,23 +42,28 @@ const SellerModal = ({ onClose }) => {
         password,
       });
 
-      // Log the entire response to check its structure
       console.log("Login response:", res);
 
-      // Since response is just the token, we directly access the token
-      const token = res.data;
+      // If backend returns just token (as string), handle accordingly
+      const responseData = res.data;
+      let token = responseData?.token || responseData;
+      let user = responseData?.user || { email, role: "SELLER" }; // Fallback
 
       if (!token) {
-        toast.error("Invalid response from server");
+        toast.error("Token missing in response");
         return;
       }
 
-      // Save the token in localStorage
+      if (user?.role !== "SELLER") {
+        toast.error("Access denied. Not a seller.");
+        return;
+      }
+
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
       toast.success("Login successful!");
 
-      // After a successful login, redirect to the seller dashboard
       setTimeout(() => {
         navigate("/seller-dashboard");
         onClose();
@@ -83,6 +89,7 @@ const SellerModal = ({ onClose }) => {
     }
 
     try {
+      // Register the seller
       const res = await axios.post(
         "http://localhost:8080/api/users/register/seller",
         {
@@ -93,31 +100,47 @@ const SellerModal = ({ onClose }) => {
         }
       );
 
-      // Log the entire response to check its structure
-      console.log("Registration response:", res);
+      console.log("✅ Registration response:", res.data);
 
-      if (res.data === "Seller registered successfully!") {
-        toast.success("Registration successful!");
+      toast.success("Registration successful!");
 
-        // Store the user token and user data in localStorage
-        // You can adjust how you handle the response data as per your server's response
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ name, email, role: "SELLER" })
-        );
+      // Auto-login after registration
+      const loginRes = await axios.post(
+        "http://localhost:8080/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
 
-        // Redirect to the seller dashboard after successful registration
-        setTimeout(() => {
-          navigate("/seller-dashboard");
-          onClose();
-        }, 1000);
-      } else {
-        toast.error("Registration failed");
+      console.log("✅ Auto-login response:", loginRes.data);
+
+      const token = loginRes.data?.token;
+      const user = loginRes.data?.user;
+
+      if (!token) {
+        toast.error("Token missing during auto-login");
+        return;
       }
+
+      if (user?.role !== "SELLER") {
+        console.warn("❌ Not a seller:", user);
+        toast.error("Click to Login");
+        return;
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      toast.success("Auto-login successful!");
+
+      setTimeout(() => {
+        navigate("/seller-dashboard");
+        onClose();
+      }, 1000);
     } catch (err) {
-      console.error("Registration error: ", err);
-      toast.error(err.response?.data?.message || "Registration failed");
+      console.error("❌ Registration/Login error:", err);
+      toast.error(err.response?.data?.message || "Registration/Login failed");
     }
   };
 
@@ -135,7 +158,6 @@ const SellerModal = ({ onClose }) => {
           {isLogin ? "Seller Login" : "Seller Registration"}
         </h2>
 
-        {/* FORM */}
         <form
           onSubmit={isLogin ? handleLogin : handleRegister}
           className="space-y-4"

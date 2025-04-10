@@ -7,6 +7,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -38,6 +39,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (rememberMe) {
       localStorage.setItem("rememberedEmail", formData.email);
@@ -75,7 +77,11 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      toast.error("Invalid email or password!");
+      toast.error(
+        error.response?.data?.message || "Invalid email or password!"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,6 +103,7 @@ const Login = () => {
             <input
               type="email"
               name="email"
+              autoComplete="email"
               value={formData.email}
               onChange={handleChange}
               required
@@ -115,6 +122,7 @@ const Login = () => {
             <input
               type={showPassword ? "text" : "password"}
               name="password"
+              autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
               required
@@ -128,6 +136,13 @@ const Login = () => {
             >
               {showPassword ? "Hide Password" : "Show Password"}
             </button>
+
+            <Link
+              to="/forgot-password"
+              className="text-sm text-blue-600 hover:underline mt-2 block"
+            >
+              Forgot Password?
+            </Link>
           </div>
 
           <div className="flex items-center">
@@ -142,9 +157,12 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transitio"
+            disabled={isLoading}
+            className={`w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transition ${
+              isLoading ? "opacity-60 cursor-not-allowed" : ""
+            }`}
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
