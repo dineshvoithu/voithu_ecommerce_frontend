@@ -12,7 +12,6 @@ const Login = () => {
     password: "",
   });
 
-  // ✅ Auto-fill remembered email on mount
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
     if (savedEmail) {
@@ -20,7 +19,6 @@ const Login = () => {
       setRememberMe(true);
     }
 
-    // ✅ Redirect if already logged in
     const savedUser = JSON.parse(localStorage.getItem("user"));
     if (savedUser) {
       const role = savedUser.role?.toUpperCase();
@@ -41,7 +39,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // ✅ Save or remove email for remember me
     if (rememberMe) {
       localStorage.setItem("rememberedEmail", formData.email);
     } else {
@@ -53,7 +50,6 @@ const Login = () => {
         "http://localhost:8080/api/users/login",
         formData
       );
-
       const token = response.data.token;
       const role = response.data.role?.toUpperCase();
 
@@ -66,7 +62,6 @@ const Login = () => {
 
         toast.success("Login successful!");
 
-        // ✅ Role-based navigation
         if (role === "ROLE_CUSTOMER" || role === "CUSTOMER") {
           navigate("/");
         } else if (role === "ROLE_SELLER" || role === "SELLER") {
@@ -85,64 +80,84 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white shadow-md rounded p-8 w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-4">
+      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-semibold text-center mb-6 text-black">
+          Login to Your Account
+        </h2>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full p-2 mb-4 border rounded"
-        />
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
 
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          className="w-full p-2 mb-2 border rounded"
-        />
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Enter your password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="text-sm text-blue-600 hover:underline mt-1"
+            >
+              {showPassword ? "Hide Password" : "Show Password"}
+            </button>
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setShowPassword((prev) => !prev)}
-          className="text-sm text-blue-600 hover:underline mb-4"
-        >
-          {showPassword ? "Hide Password" : "Show Password"}
-        </button>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={() => setRememberMe((prev) => !prev)}
+              className="mr-2"
+            />
+            <label className="text-sm text-gray-700">Remember Me</label>
+          </div>
 
-        <label className="flex items-center mb-4 text-sm">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={() => setRememberMe((prev) => !prev)}
-            className="mr-2"
-          />
-          Remember Me
-        </label>
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-900 transitio"
+          >
+            Login
+          </button>
+        </form>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-      </form>
-      <p className="text-sm text-center mt-4">
-        Already have an account?{" "}
-        <Link to="/register" className="text-blue-600 hover:underline">
-          Register
-        </Link>
-      </p>
+        <p className="text-sm text-center mt-6 text-gray-600">
+          Don’t have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
