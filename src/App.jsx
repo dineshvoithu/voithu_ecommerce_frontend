@@ -8,6 +8,11 @@ import Register from "./pages/Register";
 import HomePage from "./pages/HomePage";
 import { ROLES } from "./constants/roles";
 import Unauthorized from "./pages/Unauthorized";
+import AddProduct from "./pages/seller/AddProduct";
+import EditProduct from "./pages/seller/EditProduct";
+
+// Inside your <Routes>
+<Route path="/seller/add-product" element={<AddProduct />} />;
 
 function App() {
   return (
@@ -23,6 +28,9 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route path="/seller/add-product" element={<AddProduct />} />
+      <Route path="/seller/edit-product/:id" element={<EditProduct />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route
         path="/admin-dashboard"
