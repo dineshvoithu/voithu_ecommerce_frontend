@@ -1,28 +1,41 @@
-// src/components/Header.jsx
 import React, { useState, useEffect } from "react";
 import { ShoppingCart, User, Menu } from "lucide-react";
 import SellerModal from "./SellerModal";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ROLES } from "../constants/roles";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSellerModal, setShowSellerModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (token && user) {
+      setIsLoggedIn(true);
+      setUserRole(user.role);
+    }
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     setIsLoggedIn(false);
+    setUserRole(null);
     toast.success("Logged out successfully");
     navigate("/");
+  };
+
+  const getDashboardPath = () => {
+    if (userRole === ROLES.CUSTOMER) return "/";
+    if (userRole === ROLES.SELLER) return "/seller-dashboard";
+    if (userRole === ROLES.ADMIN) return "/admin-dashboard";
+    return "/";
   };
 
   return (
@@ -46,6 +59,15 @@ const Header = () => {
         <div className="hidden md:flex gap-4 items-center">
           <ShoppingCart className="cursor-pointer" />
 
+          {isLoggedIn && (
+            <Link
+              to={getDashboardPath()}
+              className="text-white hover:underline text-sm"
+            >
+              Dashboard
+            </Link>
+          )}
+
           {!isLoggedIn ? (
             <Link to="/login">
               <User className="cursor-pointer" />
@@ -59,12 +81,14 @@ const Header = () => {
             </button>
           )}
 
-          <button
-            onClick={() => setShowSellerModal(true)}
-            className="bg-white text-[#101828] px-4 py-2 rounded hover:bg-[#ff6f61] hover:text-white"
-          >
-            Become a Seller
-          </button>
+          {userRole !== ROLES.SELLER && (
+            <button
+              onClick={() => setShowSellerModal(true)}
+              className="bg-white text-[#101828] px-4 py-2 rounded hover:bg-[#ff6f61] hover:text-white"
+            >
+              Become a Seller
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -91,7 +115,14 @@ const Header = () => {
           <Link to="#" className="block">
             Watches
           </Link>
+
           <div className="flex flex-col gap-3 pt-3 border-t border-gray-700">
+            {isLoggedIn && (
+              <Link to={getDashboardPath()} className="text-white">
+                Dashboard
+              </Link>
+            )}
+
             {!isLoggedIn ? (
               <Link to="/login" className="flex items-center gap-2">
                 <User />
@@ -106,17 +137,19 @@ const Header = () => {
               </button>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-white">
               <ShoppingCart />
               <span>Cart</span>
             </div>
 
-            <button
-              onClick={() => setShowSellerModal(true)}
-              className="bg-white text-[#101828] px-4 py-2 rounded hover:bg-[#ff6f61] hover:text-white"
-            >
-              Become a Seller
-            </button>
+            {userRole !== ROLES.SELLER && (
+              <button
+                onClick={() => setShowSellerModal(true)}
+                className="bg-white text-[#101828] px-4 py-2 rounded hover:bg-[#ff6f61] hover:text-white"
+              >
+                Become a Seller
+              </button>
+            )}
           </div>
         </div>
       )}

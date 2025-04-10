@@ -93,23 +93,28 @@ const SellerModal = ({ onClose }) => {
         }
       );
 
-      // Assuming the backend returns just a token and not a full user object for registration
-      const token = res.data;
+      // Log the entire response to check its structure
+      console.log("Registration response:", res);
 
-      if (!token) {
-        toast.error("Invalid response from server");
-        return;
+      if (res.data === "Seller registered successfully!") {
+        toast.success("Registration successful!");
+
+        // Store the user token and user data in localStorage
+        // You can adjust how you handle the response data as per your server's response
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ name, email, role: "SELLER" })
+        );
+
+        // Redirect to the seller dashboard after successful registration
+        setTimeout(() => {
+          navigate("/seller-dashboard");
+          onClose();
+        }, 1000);
+      } else {
+        toast.error("Registration failed");
       }
-
-      // Store the token in localStorage
-      localStorage.setItem("token", token);
-
-      toast.success("Registration successful!");
-
-      setTimeout(() => {
-        navigate("/seller-dashboard");
-        onClose();
-      }, 1000);
     } catch (err) {
       console.error("Registration error: ", err);
       toast.error(err.response?.data?.message || "Registration failed");

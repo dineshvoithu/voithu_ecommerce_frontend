@@ -1,120 +1,148 @@
-// src/pages/Login.jsx
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // for redirection
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const validate = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address");
-      return false;
+  // ✅ Auto-fill remembered email on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setFormData((prev) => ({ ...prev, email: savedEmail }));
+      setRememberMe(true);
     }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return false;
-    }
 
-    return true;
+    // ✅ Redirect if already logged in
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedUser) {
+      const role = savedUser.role?.toUpperCase();
+      if (role === "ROLE_ADMIN") navigate("/admin-dashboard");
+      else if (role === "ROLE_SELLER" || role === "SELLER")
+        navigate("/seller-dashboard");
+      else if (role === "ROLE_CUSTOMER" || role === "CUSTOMER") navigate("/");
+    }
+  }, [navigate]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    // ✅ Save or remove email for remember me
+    if (rememberMe) {
+      localStorage.setItem("rememberedEmail", formData.email);
+    } else {
+      localStorage.removeItem("rememberedEmail");
+    }
 
     try {
       const response = await axios.post(
         "http://localhost:8080/api/users/login",
-        {
-          email,
-          password,
-        }
+        formData
       );
 
-      const { token, role } = response.data;
+      const token = response.data.token;
+      const role = response.data.role?.toUpperCase();
 
-      // Save token in localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
+      if (token && role) {
+        localStorage.setItem("token", token);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ email: formData.email, role })
+        );
 
-      toast.success("Login successful!");
+        toast.success("Login successful!");
 
-      // Optional: redirect after short delay
-      setTimeout(() => {
-        if (role === "ROLE_CUSTOMER") {
+        // ✅ Role-based navigation
+        if (role === "ROLE_CUSTOMER" || role === "CUSTOMER") {
           navigate("/");
-        } else if (role === "SELLER") {
+        } else if (role === "ROLE_SELLER" || role === "SELLER") {
           navigate("/seller-dashboard");
-        } else if (role === "ADMIN") {
+        } else if (role === "ROLE_ADMIN" || role === "ADMIN") {
           navigate("/admin-dashboard");
         } else {
-          navigate("/"); // fallback
+          toast.error("Unknown role: " + role);
+          navigate("/login");
         }
-      }, 1500);
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid email or password");
+      console.error("Login failed:", error);
+      toast.error("Invalid email or password!");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <ToastContainer />
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md relative">
-        {/* Close Button */}
-        <Link
-          to="/"
-          className="absolute top-2 right-2 text-xl hover:text-red-500 transition"
-        >
-          ✖
-        </Link>
-
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white shadow-md rounded p-8 w-full max-w-sm"
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 font-medium">Email</label>
-            <input
-              type="email"
-              className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          className="w-full p-2 mb-4 border rounded"
+        />
 
-          <div>
-            <label className="block mb-1 font-medium">Password</label>
-            <input
-              type="password"
-              className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type={showPassword ? "text" : "password"}
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          className="w-full p-2 mb-2 border rounded"
+        />
 
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
-          >
-            Login
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="text-sm text-blue-600 hover:underline mb-4"
+        >
+          {showPassword ? "Hide Password" : "Show Password"}
+        </button>
 
-        <p className="mt-4 text-sm text-center">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register here
-          </Link>
-        </p>
-      </div>
+        <label className="flex items-center mb-4 text-sm">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={() => setRememberMe((prev) => !prev)}
+            className="mr-2"
+          />
+          Remember Me
+        </label>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Login
+        </button>
+      </form>
+      <p className="text-sm text-center mt-4">
+        Already have an account?{" "}
+        <Link to="/register" className="text-blue-600 hover:underline">
+          Register
+        </Link>
+      </p>
     </div>
   );
 };

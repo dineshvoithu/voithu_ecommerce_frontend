@@ -24,18 +24,21 @@ const Register = () => {
     const { name, email, password } = formData;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (name.length < 3) {
-      toast.error("Name must be at least 3 characters");
+    if (!name || name.trim().length < 3) {
+      toast.error("Name must be at least 3 characters long");
       return false;
     }
-    if (!emailRegex.test(email)) {
-      toast.error("Invalid email format");
+
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
       return false;
     }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+
+    if (!password || password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
       return false;
     }
+
     return true;
   };
 
@@ -49,7 +52,6 @@ const Register = () => {
     };
 
     try {
-      console.log("Sending registration data:", payload);
       const response = await axios.post(
         "http://localhost:8080/api/users/register/customer",
         payload,
@@ -70,13 +72,18 @@ const Register = () => {
       setFormData({ name: "", email: "", password: "" });
 
       setTimeout(() => {
-        navigate("/"); // or "/customer-dashboard"
+        if (role === "CUSTOMER") {
+          navigate("/customer-dashboard");
+        } else {
+          navigate("/");
+        }
       }, 1500);
     } catch (error) {
-      console.error("Registration Error:", error.response || error.message);
-      toast.error(
-        error.response?.data?.message || "Registration failed. Try again!"
-      );
+      console.error("Registration Error:", error);
+      const errMsg =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
+      toast.error(errMsg);
     }
   };
 
