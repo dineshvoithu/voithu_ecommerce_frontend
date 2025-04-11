@@ -12,83 +12,96 @@ import AddProduct from "./pages/seller/AddProduct";
 import EditProduct from "./pages/seller/EditProduct";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 import SearchResults from "./pages/SearchResults";
 import CategoryProducts from "./pages/CategoryProductsPage";
-import CategoryCards from "./sections/ShopByCategories";
-
-// Inside your <Routes>
+import CartPage from "./pages/CartPage";
+import { Toaster } from "react-hot-toast";
+import Layout from "./components/Layout";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/search" element={<SearchResults />} />
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/cart" element={<CartPage />} />
 
-      <Route
-        path="/category/:category"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
-            <div>
-              <Header />
-              <CategoryProducts />
-              <Footer />
-            </div>
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/category/:category"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+              <div>
+                <Layout>
+                  <CategoryProducts />
+                </Layout>
+              </div>
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/seller-dashboard"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.SELLER]}>
-            <SellerDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/products"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
-            <Header />
-            <ProductsPage />
-            <Footer />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/seller-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.SELLER]}>
+              <SellerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+              <Layout>
+                <ProductsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/product/:id"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
-            <Header />
-            <ProductDetailsPage />
-            <Footer />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/seller/add-product" element={<AddProduct />} />
-      <Route path="/seller/edit-product/:id" element={<EditProduct />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route
-        path="/admin-dashboard"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+        <Route
+          path="/product/:id"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+              <Layout>
+                <ProductDetailsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/seller/add-product" element={<AddProduct />} />
+        <Route path="/seller/edit-product/:id" element={<EditProduct />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER]}>
+              <Layout>
+                <CartPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

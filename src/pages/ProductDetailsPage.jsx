@@ -5,6 +5,7 @@ import { ShoppingCart, Bolt } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
+import toast from "react-hot-toast"; // ✅ Toaster import
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -30,6 +31,33 @@ const ProductDetailsPage = () => {
 
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
+  };
+
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to add items to cart.");
+      return;
+    }
+
+    try {
+      await axiosInstance.post(
+        "/api/cart/add",
+        {
+          productId: product.id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Added to cart!");
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      toast.error("Failed to add to cart.");
+    }
   };
 
   if (!product)
@@ -69,9 +97,13 @@ const ProductDetailsPage = () => {
           </div>
 
           <div className="flex gap-4">
-            <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow transition">
+            <button
+              onClick={handleAddToCart}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow transition"
+            >
               <ShoppingCart size={18} /> Add to Cart
             </button>
+
             <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow transition">
               <Bolt size={18} /> Buy Now
             </button>
