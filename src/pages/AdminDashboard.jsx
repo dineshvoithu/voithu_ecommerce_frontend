@@ -57,7 +57,7 @@ const AdminDashboard = () => {
         },
       });
       toast.success("✅ User deleted successfully!");
-      fetchUsers(); // 🔁 Refresh list
+      fetchUsers(); // Refresh list
     } catch (error) {
       console.error("Delete error:", error);
       toast.error("❌ Failed to delete user");

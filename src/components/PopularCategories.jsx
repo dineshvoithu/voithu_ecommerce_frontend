@@ -1,6 +1,6 @@
 // PopularCategories.jsx
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/axiosInstance"; // 👈 important
+import axiosInstance from "../utils/axiosInstance"; // important
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
@@ -14,7 +14,7 @@ const PopularCategories = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axiosInstance.get("/api/products"); // 👈 using axiosInstance
+        const response = await axiosInstance.get("/api/products"); // using axiosInstance
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products", error);

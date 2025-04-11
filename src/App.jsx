@@ -10,16 +10,18 @@ import { ROLES } from "./constants/roles";
 import Unauthorized from "./pages/Unauthorized";
 import AddProduct from "./pages/seller/AddProduct";
 import EditProduct from "./pages/seller/EditProduct";
+import ProductsPage from "./pages/ProductsPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 // Inside your <Routes>
-<Route path="/seller/add-product" element={<AddProduct />} />;
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
       <Route
         path="/seller-dashboard"
         element={
@@ -28,7 +30,27 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/products"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+            <Header />
+            <ProductsPage />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
 
+      <Route
+        path="/product/:id"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+            <Header />
+            <ProductDetailsPage />
+            <Footer />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/seller/add-product" element={<AddProduct />} />
       <Route path="/seller/edit-product/:id" element={<EditProduct />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
@@ -40,7 +62,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/"
         element={
