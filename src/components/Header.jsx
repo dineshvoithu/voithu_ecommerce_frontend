@@ -13,14 +13,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (token && user) {
-        setIsLoggedIn(true);
-        setUserRole(user.role);
-      }
-    } catch (error) {
-      console.error("Invalid user JSON in localStorage", error);
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (token && user) {
+      setIsLoggedIn(true);
+      setUserRole(user.role);
     }
   }, []);
 
@@ -38,7 +35,7 @@ const Header = () => {
     if (userRole === ROLES.CUSTOMER) return "/";
     if (userRole === ROLES.SELLER) return "/seller-dashboard";
     if (userRole === ROLES.ADMIN) return "/admin-dashboard";
-    if (!userRole) return "/";
+    return "/";
   };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,11 +75,21 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="flex gap-6 font-medium">
-            <Link to="/">Home</Link>
-            <Link to="#">Mobiles</Link>
-            <Link to="#">Tablets</Link>
-            <Link to="#">TVs</Link>
-            <Link to="#">Watches</Link>
+            <Link to="/products" className="hover:text-[#ff6f61]">
+              All Products
+            </Link>
+            <Link to="/category/Mobiles" className="hover:text-[#ff6f61]">
+              Mobiles
+            </Link>
+            <Link to="/category/Tablets" className="hover:text-[#ff6f61]">
+              Tablets
+            </Link>
+            <Link to="/category/TV" className="hover:text-[#ff6f61]">
+              TV
+            </Link>
+            <Link to="/category/Watches" className="hover:text-[#ff6f61]">
+              Watches
+            </Link>
           </nav>
         </div>
 
@@ -150,19 +157,19 @@ const Header = () => {
             </button>
           </div>
 
-          <Link to="/" className="block">
-            Home
+          <Link to="/products" className="hover:text-[#ff6f61]">
+            All Products
           </Link>
-          <Link to="#" className="block">
+          <Link to="/category/Mobiles" className="hover:text-[#ff6f61] block">
             Mobiles
           </Link>
-          <Link to="#" className="block">
+          <Link to="/category/Tablets" className="hover:text-[#ff6f61] block">
             Tablets
           </Link>
-          <Link to="#" className="block">
-            TVs
+          <Link to="/category/TV" className="hover:text-[#ff6f61] block">
+            TV
           </Link>
-          <Link to="#" className="block">
+          <Link to="/category/Watches" className="hover:text-[#ff6f61] block">
             Watches
           </Link>
 

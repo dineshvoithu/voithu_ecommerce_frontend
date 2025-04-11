@@ -1,56 +1,120 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import { ShoppingCart, Bolt } from "lucide-react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
 
 const ProductDetailsPage = () => {
-  const { id } = useParams(); // Get product ID from URL
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axiosInstance.get(`/api/products/${id}`);
-        setProduct(res.data);
+        const productRes = await axiosInstance.get(`/api/products/${id}`);
+        setProduct(productRes.data);
+
+        const allRes = await axiosInstance.get(`/api/products`);
+        setAllProducts(allRes.data);
       } catch (err) {
-        console.error("Error fetching product:", err);
+        console.error("Error fetching product or all products:", err);
       }
     };
 
-    fetchProductDetails();
+    fetchData();
   }, [id]);
 
-  if (!product) return <div className="p-4">Loading...</div>;
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
+  if (!product)
+    return <div className="p-8 text-center text-xl">Loading...</div>;
+
+  const similarProducts = allProducts.filter(
+    (p) => p.category === product.category && p.id !== product.id
+  );
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="flex flex-col md:flex-row gap-6">
-        <img
-          src={`http://localhost:8080${product.imageUrl}`}
-          alt={product.name}
-          className="w-full md:w-1/2 h-96 object-contain border rounded-lg"
-        />
+    <div className="max-w-6xl mx-auto px-6 py-10">
+      {/* Product Info Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-2xl shadow-lg">
+        <div className="w-full">
+          <img
+            src={`http://localhost:8080${product.imageUrl}`}
+            alt={product.name}
+            className="w-full h-[400px] object-contain rounded-xl border"
+          />
+        </div>
 
-        <div className="flex-1">
-          <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
-          <p className="text-gray-500 text-sm mb-1">
-            Category: {product.category}
-          </p>
-          <p className="text-green-600 text-xl font-semibold mb-4">
-            ₹{product.price}
-          </p>
-          <p className="mb-6">{product.description}</p>
+        <div className="flex flex-col justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {product.name}
+            </h1>
+            <p className="text-sm text-gray-500 mb-1">
+              <span className="font-medium text-black">Category:</span>{" "}
+              {product.category}
+            </p>
+            <p className="text-xl text-green-600 font-semibold mb-6">
+              ₹{product.price.toLocaleString()}
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-8">
+              {product.description}
+            </p>
+          </div>
 
           <div className="flex gap-4">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Add to Cart
+            <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow transition">
+              <ShoppingCart size={18} /> Add to Cart
             </button>
-            <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-              Buy Now
+            <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow transition">
+              <Bolt size={18} /> Buy Now
             </button>
           </div>
         </div>
       </div>
+
+      {/* Similar Products Section */}
+      {similarProducts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold mb-4">Similar Products</h2>
+          <Swiper
+            spaceBetween={16}
+            slidesPerView={1}
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              768: { slidesPerView: 3 },
+              1024: { slidesPerView: 4 },
+            }}
+          >
+            {similarProducts.map((item) => (
+              <SwiperSlide key={item.id}>
+                <div
+                  onClick={() => handleProductClick(item.id)}
+                  className="bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer p-4"
+                >
+                  <img
+                    src={`http://localhost:8080${item.imageUrl}`}
+                    alt={item.name}
+                    className="w-full aspect-[3/2] object-cover rounded mb-2"
+                  />
+                  <h3 className="text-lg font-semibold hover:text-[#ff6f61] text-center">
+                    {item.name}
+                  </h3>
+                  <p className="text-center text-green-600 font-medium">
+                    ₹{item.price.toLocaleString()}
+                  </p>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,14 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PromoSection = () => {
+  const navigate = useNavigate();
+
+  const handleShopNow = () => {
+    navigate("/products");
+  };
+
   return (
     <section
       className="overflow-hidden rounded-2xl p-4 md:p-8 my-10  flex flex-col md:flex-row items-center justify-between gap-6"
@@ -17,7 +24,10 @@ const PromoSection = () => {
         <p className="text-gray-700 mb-6">
           Discover exclusive deals and new arrivals that suit your style.
         </p>
-        <button className="bg-[#101828] hover:bg-[#101828] text-white px-6 py-3 rounded-lg transition flex items-center gap-2">
+        <button
+          onClick={handleShopNow}
+          className="bg-[#101828] hover:bg-[#101828] text-white px-6 py-3 rounded-lg transition flex items-center gap-2"
+        >
           Shop Now <ArrowRight size={20} />
         </button>
       </div>

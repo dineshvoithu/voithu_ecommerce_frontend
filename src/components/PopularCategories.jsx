@@ -1,20 +1,21 @@
-// PopularCategories.jsx
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/axiosInstance"; // important
+import axiosInstance from "../utils/axiosInstance";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/navigation";
 
 const PopularCategories = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate(); // For redirect
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axiosInstance.get("/api/products"); // using axiosInstance
+        const response = await axiosInstance.get("/api/products");
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products", error);
@@ -23,6 +24,11 @@ const PopularCategories = () => {
 
     fetchProducts();
   }, []);
+
+  // Handle product click
+  const handleProductClick = (id) => {
+    navigate(`/product/${id}`);
+  };
 
   return (
     <div className="px-4 py-8 bg-gray-100 pt-[80px] pb-[80px] relative">
@@ -59,8 +65,11 @@ const PopularCategories = () => {
       >
         {products.map((product) => (
           <SwiperSlide key={product.id}>
-            <div className="relative group bg-white rounded-xl shadow hover:shadow-lg transition p-4">
-              <div className="relative">
+            <div className="relative group bg-white rounded-xl shadow hover:shadow-lg transition p-4 cursor-pointer">
+              <div
+                className="relative"
+                onClick={() => handleProductClick(product.id)} //  Click image
+              >
                 <img
                   src={`http://localhost:8080${product.imageUrl}`}
                   alt={product.name}
@@ -70,7 +79,10 @@ const PopularCategories = () => {
                   <ShoppingCart size={20} className="text-black" />
                 </button>
               </div>
-              <h3 className="mt-2 font-semibold text-lg text-center hover:text-[#ff6f61] cursor-pointer">
+              <h3
+                className="mt-2 font-semibold text-lg text-center hover:text-[#ff6f61]"
+                onClick={() => handleProductClick(product.id)} //  Click name
+              >
                 {product.name}
               </h3>
               <p className="text-black text-center">

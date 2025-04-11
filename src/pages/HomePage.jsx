@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
-import Categories from "../sections/Categories";
+import Categories from "../sections/ShopByCategories";
 import Marquee from "../components/Marquee";
 import TrendingProducts from "../components/TrendingProducts";
 import PromoSection from "../components/PromoSection";
@@ -9,6 +9,7 @@ import PopularCategories from "../components/PopularCategories";
 import FeatureHighlights from "../components/FeatureHighlights";
 import CustomerTestimonials from "../components/CustomerTestimonials";
 import Footer from "../components/Footer";
+import ShopByCategories from "../sections/ShopByCategories";
 
 const HomePage = () => {
   return (
@@ -16,7 +17,7 @@ const HomePage = () => {
       <Header />
       <Hero />
       <Marquee />
-      <Categories />
+      <ShopByCategories />
       <TrendingProducts />
       <PromoSection />
       <PopularCategories />

@@ -14,6 +14,9 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import SearchResults from "./pages/SearchResults";
+import CategoryProducts from "./pages/CategoryProductsPage";
+import CategoryCards from "./sections/ShopByCategories";
 
 // Inside your <Routes>
 
@@ -22,6 +25,21 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/search" element={<SearchResults />} />
+
+      <Route
+        path="/category/:category"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+            <div>
+              <Header />
+              <CategoryProducts />
+              <Footer />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/seller-dashboard"
         element={
