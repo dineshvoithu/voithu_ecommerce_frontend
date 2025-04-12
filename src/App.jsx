@@ -17,6 +17,7 @@ import CategoryProducts from "./pages/CategoryProductsPage";
 import CartPage from "./pages/CartPage";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/Layout";
+import CheckoutPage from "./pages/CheckoutPage";
 
 function App() {
   return (
@@ -100,6 +101,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
     </>
   );

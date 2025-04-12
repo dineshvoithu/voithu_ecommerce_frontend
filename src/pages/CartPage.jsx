@@ -3,10 +3,12 @@ import instance from "../utils/axiosInstance";
 import { Trash2, Plus, Minus } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCartItems();
@@ -53,7 +55,6 @@ const CartPage = () => {
 
   return (
     <>
-      {" "}
       <Header />
       <div className="p-4 md:p-8 max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-center">
@@ -124,8 +125,11 @@ const CartPage = () => {
             {/* Total & Place Order */}
             <div className="mt-8 bg-gray-50 p-6 rounded-xl shadow text-right">
               <h3 className="text-2xl font-bold mb-2">Total: ₹{totalAmount}</h3>
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
-                🧾 Place Order
+              <button
+                onClick={() => navigate("/checkout")}
+                className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
+                Proceed to Buy
               </button>
             </div>
           </>
