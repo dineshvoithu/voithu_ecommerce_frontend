@@ -38,9 +38,10 @@ const CheckoutPage = () => {
       const response = await instance.get("/api/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // Adjusted to map backend fields correctly
       setUserDetails({
-        fullName: response.data.fullName,
-        phone: response.data.phone,
+        fullName: response.data.name, // Mapping to 'name' as per backend
+        phone: response.data.phone_number, // Mapping to 'phone_number' as per backend
         address: response.data.address,
         paymentMode: "card", // You can keep the default payment mode
       });

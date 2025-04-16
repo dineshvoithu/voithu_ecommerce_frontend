@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import instance from "../utils/axiosInstance";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProfilePage = () => {
   const [userDetails, setUserDetails] = useState({
-    name: "",
+    fullName: "",
     email: "",
-    phone_number: "",
+    phone: "",
     address: "",
-    password: "",
     currentPassword: "",
     newPassword: "",
     confirmNewPassword: "",
@@ -17,6 +18,8 @@ const ProfilePage = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     fetchUserDetails();
@@ -29,15 +32,19 @@ const ProfilePage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      // Log the response to verify the structure of the response data
+      console.log("Fetched User Details:", response.data);
+
       setUserDetails((prev) => ({
         ...prev,
-        name: response.data.fullName || "",
+        fullName: response.data.name || "", // Adjusted field name
         email: response.data.email || "",
-        phone_number: response.data.phone || "",
+        phone: response.data.phone_number || "", // Adjusted field name
         address: response.data.address || "",
       }));
     } catch (error) {
       console.error("Failed to fetch user details", error);
+      toast.error("Failed to fetch user details");
     }
   };
 
@@ -48,17 +55,18 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem("token");
+    setIsSubmitting(true);
 
     if (isChangingPassword) {
       if (userDetails.newPassword !== userDetails.confirmNewPassword) {
-        alert("New passwords do not match");
+        toast.warning("New passwords do not match");
+        setIsSubmitting(false);
         return;
       }
 
       try {
-        const response = await instance.put(
+        await instance.put(
           "/api/users/update-password",
           {
             currentPassword: userDetails.currentPassword,
@@ -66,31 +74,40 @@ const ProfilePage = () => {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("Password updated:", response.data);
+        toast.success("Password updated successfully");
+        setUserDetails((prev) => ({
+          ...prev,
+          currentPassword: "",
+          newPassword: "",
+          confirmNewPassword: "",
+        }));
         setIsChangingPassword(false);
-        alert("Password updated successfully");
       } catch (error) {
         console.error("Failed to update password", error);
-        alert("Failed to update password");
+        toast.error("Failed to update password");
+      }
+    } else if (isEditing) {
+      try {
+        const { fullName, phone, address } = userDetails;
+        // Update API call with correct mapping
+        await instance.put(
+          "/api/users/me",
+          {
+            name: fullName, // Match backend field name 'name'
+            phone_number: phone, // Match backend field name 'phone_number'
+            address, // 'address' is fine as it is
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast.success("Profile updated successfully");
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Failed to update profile", error);
+        toast.error("Failed to update profile");
       }
     }
 
-    if (isEditing) {
-      try {
-        const { name, phone_number, address } = userDetails;
-        const response = await instance.put(
-          "/api/users/me",
-          { fullName: name, phone: phone_number, address },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log("Profile updated:", response.data);
-        setIsEditing(false);
-        alert("Profile updated successfully");
-      } catch (error) {
-        console.error("Failed to update profile", error);
-        alert("Failed to update profile");
-      }
-    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -103,13 +120,12 @@ const ProfilePage = () => {
           onSubmit={handleSubmit}
           className="bg-white shadow-md rounded-xl p-6 space-y-4"
         >
-          {/* Name */}
           <div>
             <label className="block mb-1 font-medium">Full Name</label>
             <input
               type="text"
-              name="name"
-              value={userDetails.name}
+              name="fullName"
+              value={userDetails.fullName}
               onChange={handleChange}
               disabled={!isEditing}
               className="w-full border px-4 py-2 rounded-lg"
@@ -117,26 +133,23 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block mb-1 font-medium">Email</label>
             <input
               type="email"
               name="email"
               value={userDetails.email}
-              onChange={handleChange}
               disabled
               className="w-full border px-4 py-2 rounded-lg"
             />
           </div>
 
-          {/* Phone Number */}
           <div>
             <label className="block mb-1 font-medium">Phone Number</label>
             <input
               type="tel"
-              name="phone_number"
-              value={userDetails.phone_number}
+              name="phone"
+              value={userDetails.phone}
               onChange={handleChange}
               disabled={!isEditing}
               className="w-full border px-4 py-2 rounded-lg"
@@ -144,7 +157,6 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Address */}
           <div>
             <label className="block mb-1 font-medium">Address</label>
             <textarea
@@ -159,7 +171,6 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Password Change Toggle */}
           <div>
             <button
               type="button"
@@ -172,7 +183,6 @@ const ProfilePage = () => {
             </button>
           </div>
 
-          {/* Password Change Fields */}
           {isChangingPassword && (
             <>
               <div>
@@ -180,7 +190,7 @@ const ProfilePage = () => {
                   Current Password
                 </label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="currentPassword"
                   value={userDetails.currentPassword}
                   onChange={handleChange}
@@ -192,7 +202,7 @@ const ProfilePage = () => {
               <div>
                 <label className="block mb-1 font-medium">New Password</label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="newPassword"
                   value={userDetails.newPassword}
                   onChange={handleChange}
@@ -206,7 +216,7 @@ const ProfilePage = () => {
                   Confirm New Password
                 </label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="confirmNewPassword"
                   value={userDetails.confirmNewPassword}
                   onChange={handleChange}
@@ -214,26 +224,38 @@ const ProfilePage = () => {
                   required
                 />
               </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="showPassword"
+                  checked={showPassword}
+                  onChange={() => setShowPassword((prev) => !prev)}
+                />
+                <label htmlFor="showPassword" className="text-sm">
+                  Show Passwords
+                </label>
+              </div>
             </>
           )}
 
-          {/* Action Buttons */}
           <div className="flex gap-4">
             {(isEditing || isChangingPassword) && (
               <button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg mt-4"
+                className={`bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg mt-4 ${
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={isSubmitting}
               >
-                Save Changes
+                {isSubmitting ? "Saving..." : "Save Changes"}
               </button>
             )}
 
             {!isEditing && !isChangingPassword && (
               <button
                 type="button"
-                onClick={() => {
-                  setIsEditing(true);
-                }}
+                onClick={() => setIsEditing(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg mt-4"
               >
                 Edit Profile
@@ -242,7 +264,9 @@ const ProfilePage = () => {
           </div>
         </form>
       </div>
+
       <Footer />
+      <ToastContainer position="top-right" />
     </>
   );
 };

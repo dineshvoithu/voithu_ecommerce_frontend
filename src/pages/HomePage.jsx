@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
-import Categories from "../sections/ShopByCategories";
 import Marquee from "../components/Marquee";
 import TrendingProducts from "../components/TrendingProducts";
 import PromoSection from "../components/PromoSection";
