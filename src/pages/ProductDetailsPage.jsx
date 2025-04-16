@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { ShoppingCart, Bolt } from "lucide-react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
 import toast from "react-hot-toast"; // ✅ Toaster import
 
 const ProductDetailsPage = () => {
@@ -60,6 +57,38 @@ const ProductDetailsPage = () => {
     }
   };
 
+  const handleBuyNow = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to proceed.");
+      return;
+    }
+
+    try {
+      // Add the product directly to the cart
+      await axiosInstance.post(
+        "/api/cart/add",
+        {
+          productId: product.id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // After adding to the cart, navigate to checkout page and pass cart data
+      navigate("/checkout", {
+        state: { cartItems: [{ product, quantity: 1 }] },
+      });
+    } catch (err) {
+      console.error("Error during Buy Now process:", err);
+      toast.error("Failed to proceed with Buy Now.");
+    }
+  };
+
   if (!product)
     return <div className="p-8 text-center text-xl">Loading...</div>;
 
@@ -104,7 +133,10 @@ const ProductDetailsPage = () => {
               <ShoppingCart size={18} /> Add to Cart
             </button>
 
-            <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow transition">
+            <button
+              onClick={handleBuyNow}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow transition"
+            >
               <Bolt size={18} /> Buy Now
             </button>
           </div>
