@@ -29,30 +29,28 @@ const ProfilePage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setUserDetails({
-        name: response.data.fullName,
-        email: response.data.email,
-        phone_number: response.data.phone,
-        address: response.data.address,
-        password: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmNewPassword: "",
-      });
+      setUserDetails((prev) => ({
+        ...prev,
+        name: response.data.fullName || "",
+        email: response.data.email || "",
+        phone_number: response.data.phone || "",
+        address: response.data.address || "",
+      }));
     } catch (error) {
       console.error("Failed to fetch user details", error);
     }
   };
 
   const handleChange = (e) => {
-    setUserDetails({
-      ...userDetails,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setUserDetails((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("token");
+
     if (isChangingPassword) {
       if (userDetails.newPassword !== userDetails.confirmNewPassword) {
         alert("New passwords do not match");
@@ -60,33 +58,37 @@ const ProfilePage = () => {
       }
 
       try {
-        const token = localStorage.getItem("token");
         const response = await instance.put(
           "/api/users/update-password",
           {
             currentPassword: userDetails.currentPassword,
             newPassword: userDetails.newPassword,
           },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log("Password updated:", response.data);
         setIsChangingPassword(false);
+        alert("Password updated successfully");
       } catch (error) {
         console.error("Failed to update password", error);
         alert("Failed to update password");
       }
-    } else {
+    }
+
+    if (isEditing) {
       try {
-        const token = localStorage.getItem("token");
-        const response = await instance.put("/api/users/me", userDetails, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const { name, phone_number, address } = userDetails;
+        const response = await instance.put(
+          "/api/users/me",
+          { fullName: name, phone: phone_number, address },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         console.log("Profile updated:", response.data);
-        setIsEditing(false); // Disable editing after successful update
+        setIsEditing(false);
+        alert("Profile updated successfully");
       } catch (error) {
         console.error("Failed to update profile", error);
+        alert("Failed to update profile");
       }
     }
   };
@@ -157,7 +159,7 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Password Change Option */}
+          {/* Password Change Toggle */}
           <div>
             <button
               type="button"
@@ -170,9 +172,9 @@ const ProfilePage = () => {
             </button>
           </div>
 
+          {/* Password Change Fields */}
           {isChangingPassword && (
             <>
-              {/* Current Password */}
               <div>
                 <label className="block mb-1 font-medium">
                   Current Password
@@ -187,7 +189,6 @@ const ProfilePage = () => {
                 />
               </div>
 
-              {/* New Password */}
               <div>
                 <label className="block mb-1 font-medium">New Password</label>
                 <input
@@ -200,7 +201,6 @@ const ProfilePage = () => {
                 />
               </div>
 
-              {/* Confirm New Password */}
               <div>
                 <label className="block mb-1 font-medium">
                   Confirm New Password
@@ -217,23 +217,29 @@ const ProfilePage = () => {
             </>
           )}
 
-          {/* Submit/Save Button */}
-          {isEditing || isChangingPassword ? (
-            <button
-              type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg mt-4"
-            >
-              Save Changes
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)} // Set editing mode
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg mt-4"
-            >
-              Edit Profile
-            </button>
-          )}
+          {/* Action Buttons */}
+          <div className="flex gap-4">
+            {(isEditing || isChangingPassword) && (
+              <button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg mt-4"
+              >
+                Save Changes
+              </button>
+            )}
+
+            {!isEditing && !isChangingPassword && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(true);
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg mt-4"
+              >
+                Edit Profile
+              </button>
+            )}
+          </div>
         </form>
       </div>
       <Footer />
