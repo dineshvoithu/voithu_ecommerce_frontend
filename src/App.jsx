@@ -18,6 +18,7 @@ import CartPage from "./pages/CartPage";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/Layout";
 import CheckoutPage from "./pages/CheckoutPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -87,6 +88,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
               <HomePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER, ROLES.ADMIN]}>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

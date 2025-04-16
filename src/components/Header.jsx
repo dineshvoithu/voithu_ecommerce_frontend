@@ -101,12 +101,21 @@ const Header = () => {
 
           {isLoggedIn && (
             <Link
+              to="/profile" // Profile Link
+              className="text-white hover:underline text-sm"
+            >
+              Profile
+            </Link>
+          )}
+
+          {/* {isLoggedIn && (
+            <Link
               to={getDashboardPath()}
               className="text-white hover:underline text-sm"
             >
               Dashboard
             </Link>
-          )}
+          )} */}
 
           {!isLoggedIn ? (
             <Link to="/login">
@@ -175,10 +184,18 @@ const Header = () => {
 
           <div className="flex flex-col gap-3 pt-3 border-t border-gray-700">
             {isLoggedIn && (
+              <Link to="/profile" className="text-white">
+                {" "}
+                {/* Profile link */}
+                Profile
+              </Link>
+            )}
+
+            {/* {isLoggedIn && (
               <Link to={getDashboardPath()} className="text-white">
                 Dashboard
               </Link>
-            )}
+            )} */}
 
             {!isLoggedIn ? (
               <Link to="/login" className="flex items-center gap-2">

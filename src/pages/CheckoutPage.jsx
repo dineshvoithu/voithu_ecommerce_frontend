@@ -2,16 +2,6 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import instance from "../utils/axiosInstance";
-import {
-  Elements,
-  CardElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-
-// Replace with your real public Stripe key
-const stripePromise = loadStripe("pk_test_XXXXXXXXXXXXXXXXXXXXXXXX");
 
 const CheckoutPage = () => {
   const [userDetails, setUserDetails] = useState({
@@ -33,13 +23,31 @@ const CheckoutPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Later we'll handle Stripe or UPI logic here
+    // Handle payment processing here
     console.log("Submitting:", userDetails);
   };
 
   useEffect(() => {
+    fetchUserDetails();
     fetchCartItems();
   }, []);
+
+  const fetchUserDetails = async () => {
+    try {
+      const token = localStorage.getItem("token"); // Assuming you're storing the JWT token in localStorage
+      const response = await instance.get("/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserDetails({
+        fullName: response.data.fullName,
+        phone: response.data.phone,
+        address: response.data.address,
+        paymentMode: "card", // You can keep the default payment mode
+      });
+    } catch (error) {
+      console.error("Failed to fetch user details", error);
+    }
+  };
 
   const fetchCartItems = async () => {
     try {
@@ -59,75 +67,8 @@ const CheckoutPage = () => {
     setTotalAmount(total);
   };
 
-  // Stripe Payment Form
-  const StripeCardForm = ({ amount }) => {
-    const stripe = useStripe();
-    const elements = useElements();
-
-    const handlePayment = async (e) => {
-      e.preventDefault();
-      if (!stripe || !elements) return;
-
-      const card = elements.getElement(CardElement);
-      const result = await stripe.createToken(card);
-
-      if (result.error) {
-        console.error(result.error.message);
-      } else {
-        console.log("Stripe Token Generated:", result.token);
-        // You can now send the token to your backend for actual payment
-      }
-    };
-
-    return (
-      <form onSubmit={handlePayment}>
-        <label className="block mb-2 font-medium">Enter Card Details</label>
-        <div className="border p-3 rounded-lg">
-          <CardElement />
-        </div>
-        <button
-          type="submit"
-          disabled={!stripe}
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
-        >
-          Pay ₹{amount}
-        </button>
-      </form>
-    );
-  };
-
-  const UpiForm = ({ amount }) => {
-    const [upiId, setUpiId] = useState("");
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log("Processing UPI Payment:", upiId);
-      // Send UPI ID to backend for simulated success/failure
-    };
-
-    return (
-      <form onSubmit={handleSubmit} className="mt-6">
-        <label className="block mb-2 font-medium">Enter UPI ID</label>
-        <input
-          type="text"
-          value={upiId}
-          onChange={(e) => setUpiId(e.target.value)}
-          placeholder="e.g., user@upi"
-          className="w-full border px-4 py-2 rounded-lg"
-          required
-        />
-        <button
-          type="submit"
-          className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg"
-        >
-          Pay ₹{amount}
-        </button>
-      </form>
-    );
-  };
-
   return (
-    <Elements stripe={stripePromise}>
+    <>
       <Header />
       <div className="max-w-4xl mx-auto p-6">
         <h2 className="text-3xl font-bold mb-6 text-center">🧾 Checkout</h2>
@@ -238,19 +179,9 @@ const CheckoutPage = () => {
             Net Total: ₹{totalAmount}
           </div>
         </div>
-
-        <div className="mt-10">
-          {userDetails.paymentMode === "card" ? (
-            <Elements stripe={stripePromise}>
-              <StripeCardForm amount={totalAmount} />
-            </Elements>
-          ) : (
-            <UpiForm amount={totalAmount} />
-          )}
-        </div>
       </div>
       <Footer />
-    </Elements>
+    </>
   );
 };
 

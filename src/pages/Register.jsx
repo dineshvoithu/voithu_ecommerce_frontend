@@ -8,6 +8,8 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone_number: "", // ✅ Corrected key
+    address: "",
     password: "",
   });
 
@@ -21,7 +23,7 @@ const Register = () => {
   };
 
   const validate = () => {
-    const { name, email, password } = formData;
+    const { name, email, phone_number, address, password } = formData;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!name || name.trim().length < 3) {
@@ -31,6 +33,16 @@ const Register = () => {
 
     if (!email || !emailRegex.test(email)) {
       toast.error("Please enter a valid email address");
+      return false;
+    }
+
+    if (!phone_number || phone_number.length !== 10) {
+      toast.error("Phone number must be 10 digits");
+      return false;
+    }
+
+    if (!address || address.length < 5) {
+      toast.error("Address must be at least 5 characters long");
       return false;
     }
 
@@ -69,7 +81,13 @@ const Register = () => {
 
       toast.success("Registration successful!");
 
-      setFormData({ name: "", email: "", password: "" });
+      setFormData({
+        name: "",
+        email: "",
+        phone_number: "",
+        address: "",
+        password: "",
+      });
 
       setTimeout(() => {
         if (role === "CUSTOMER") {
@@ -116,6 +134,22 @@ const Register = () => {
             name="email"
             placeholder="Email Address"
             value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md"
+          />
+          <input
+            type="tel"
+            name="phone_number" // ✅ matches state key
+            placeholder="Phone Number"
+            value={formData.phone_number}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md"
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={formData.address}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-md"
           />
