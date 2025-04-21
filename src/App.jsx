@@ -24,6 +24,7 @@ function App() {
   return (
     <>
       <Toaster position="top-right" />
+
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
