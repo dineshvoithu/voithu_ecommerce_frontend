@@ -1,30 +1,30 @@
-# 🛍️ E-Commerce Frontend (React + Tailwind CSS)
+# 🛍️ Voithu E-Commerce Frontend (React + Tailwind CSS)
 
-This is the **frontend** of a full-stack e-commerce web application developed as an MCA final-year project. It is built using **React JS**, styled with **Tailwind CSS**, and communicates with the Spring Boot backend via RESTful APIs.
+This is the **frontend** of a full-stack e-commerce web application built using **React.js** and styled with **Tailwind CSS**. It connects to a Spring Boot backend and provides a clean UI for customers, sellers, and admins.
 
 ---
 
 ## 💻 Technologies Used
 
-- React JS  
+- React.js  
 - Tailwind CSS  
-- Axios  
+- Axios (API calls)  
 - React Router DOM  
-- React Toastify  
+- JWT Token handling  
+- Local Storage for session
 
 ---
 
 ## ✅ Key Features
 
-- 🔐 Customer, Seller, and Admin Login/Register  
-- 👤 Role-based Dashboards  
-- 🛍️ Browse Products by Category  
-- 🛒 Add to Cart, View Cart, and Checkout  
-- 🧾 View Order History  
-- 📦 Seller Dashboard: Add/Edit/Delete Products  
-- 🧑‍💼 Admin Dashboard: Manage Users and Orders  
-- ✨ Fully responsive UI  
-- 🌐 API integration with secure JWT tokens  
+- 🔐 JWT Login/Register for Customer & Seller  
+- 👤 Role-based Dashboard (Customer, Seller, Admin)  
+- 🛍️ Product Browsing by Category  
+- 🛒 Add to Cart, Checkout, and Order History  
+- 📦 Seller: Add/Edit/Delete Products  
+- 🧑‍💼 Admin: Manage Users and Orders  
+- 🎨 Fully Responsive UI with Tailwind CSS  
+- 🔐 Protected routes based on roles
 
 ---
 
@@ -43,14 +43,44 @@ cd ecommerce-frontend
 npm install
 ```
 
-### 3. Run the Application
+### 3. Configure Backend API URL
+
+In your `.env` file:
+
+```env
+REACT_APP_BASE_URL=http://localhost:8080/api
+```
+
+Or directly update the Axios configuration file if not using `.env`.
+
+### 4. Start the App
 
 ```bash
 npm start
 ```
 
-Frontend runs on: `http://localhost:3000`  
-Make sure the backend is running on `http://localhost:8080`
+Frontend runs at: `http://localhost:3000`
+
+---
+
+## 🔐 Authentication Flow
+
+- JWT-based authentication and authorization  
+- Token stored in `localStorage`  
+- Protected routes for each role: Customer, Seller, Admin
+
+---
+
+## 🧪 Sample Routes
+
+| Route                     | Description                      |
+|---------------------------|----------------------------------|
+| `/`                       | Home Page                        |
+| `/login`                  | Login Page                       |
+| `/register`               | Register Page                    |
+| `/customer/dashboard`     | Customer: Cart & Orders          |
+| `/seller/dashboard`       | Seller: Manage Products          |
+| `/admin/dashboard`        | Admin: Manage Users and Orders   |
 
 ---
 
@@ -58,38 +88,37 @@ Make sure the backend is running on `http://localhost:8080`
 
 ```
 src/
-├── components/          # Reusable UI components (Header, Footer, etc.)
-├── pages/               # Page components (Home, Login, Register, Dashboard)
-├── services/            # Axios service files for API calls
-├── utils/               # Utility functions and token handling
-├── constants/           # Role-based route guards
-├── App.js               # App-level routing
-└── index.js             # Entry point
+├── components/        # Header, Footer, Navbars, etc.
+├── pages/             # Main pages (Home, Login, Dashboard)
+├── services/          # Axios API service calls
+├── utils/             # Token management, helpers
+├── constants/         # Roles, routes
+└── App.js             # Main App routing
 ```
 
 ---
 
-## 🔐 Role-Based Access
+## 🔧 Integration
 
-- **Customer**: Can browse, add to cart, and place orders  
-- **Seller**: Can manage their own products only  
-- **Admin**: Can manage all users and all orders  
+- Communicates with Spring Boot backend via REST API  
+- Secured with JWT in Authorization headers  
+- Handles route protection and redirection based on roles
 
 ---
 
 ## 📌 Project Info
 
 - 🎓 MCA Final Year Project  
-- 🔧 Tech Stack: React (Frontend), Spring Boot (Backend), MySQL (DB)  
-- 🧠 Developed by: Dinesh  
-- 🔐 Auth: JWT & Role-Based Access  
+- 🛠 Tech Stack: React (Frontend), Spring Boot (Backend), MySQL  
+- 👤 Developed by: Dinesh Voithu  
+- 🔐 Authentication: JWT & Role-Based  
 - 📅 Year: 2025
 
 ---
 
 ## 📫 Contact
 
-**Dinesh**  
-📧 Email: your_email@example.com  
-🔗 LinkedIn: [linkedin.com/in/yourprofile]  
-🌐 GitHub: [github.com/your-username](https://github.com/your-username)
+**Dinesh Voithu**  
+📧 Email: dineshvoithu@gmail.com  
+🔗 LinkedIn: [linkedin.com/in/dineshvoithu](https://linkedin.com/in/dineshvoithu) 
+🌐 GitHub: [github.com/dineshvoithu](https://github.com/dineshvoithu)
