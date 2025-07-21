@@ -102,7 +102,7 @@ const ProductDetailsPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-2xl shadow-lg">
         <div className="w-full">
           <img
-            src={`${import.meta.env.VITE_API_URL}${product.imageUrl}`}
+            src={`${import.meta.env.VITE_API_URL}/uploads/${product.imageUrl}`}
             alt={product.name}
             className="w-full h-[400px] object-contain rounded-xl border"
           />
