@@ -49,7 +49,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post("api/users/login", formData);
+      const response = await axiosInstance.post("/api/users/login", formData);
       const token = response.data.token;
       const role = response.data.role?.toUpperCase();
 
