@@ -65,7 +65,7 @@ const Register = () => {
     };
 
     try {
-      const response = axiosInstance.post(
+      const response = await axiosInstance.post(
         "/api/users/register/customer",
         payload,
         {
