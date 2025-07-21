@@ -163,10 +163,13 @@ const ProductDetailsPage = () => {
                   className="bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer p-4"
                 >
                   <img
-                    src={`${import.meta.env.VITE_API_URL}${item.imageUrl}`}
+                    src={`${import.meta.env.VITE_API_URL}/uploads/${
+                      item.imageUrl
+                    }`}
                     alt={item.name}
                     className="w-full aspect-[3/2] object-cover rounded mb-2"
                   />
+
                   <h3 className="text-lg font-semibold hover:text-[#ff6f61] text-center">
                     {item.name}
                   </h3>
