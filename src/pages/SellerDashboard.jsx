@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
 
 const SellerDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -9,7 +10,7 @@ const SellerDashboard = () => {
   const fetchSellerProducts = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await axios.get("http://localhost:8080/api/products/seller", {
+      const res = await axiosInstance.get("/api/products/seller", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -28,7 +29,7 @@ const SellerDashboard = () => {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:8080/api/products/${id}`, {
+      axiosInstance.delete(`api/products/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -92,7 +93,7 @@ const SellerDashboard = () => {
               className="border rounded-lg shadow p-4 bg-white flex flex-col justify-between"
             >
               <img
-                src={`http://localhost:8080${product.imageUrl}`}
+                src={`${import.meta.env.VITE_API_URL}${product.imageUrl}`}
                 alt={product.name}
                 className="w-full h-40 object-cover rounded mb-4"
               />

@@ -40,7 +40,7 @@ const ProductsPage = () => {
               onClick={() => handleProductClick(product.id)}
             >
               <img
-                src={`http://localhost:8080${product.imageUrl}`}
+                src={`${import.meta.env.VITE_API_URL}${product.imageUrl}`}
                 alt={product.name}
                 className="w-full aspect-[3/2] object-cover rounded-t-2xl"
               />

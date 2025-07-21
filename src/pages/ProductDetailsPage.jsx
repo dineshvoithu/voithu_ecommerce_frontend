@@ -102,7 +102,7 @@ const ProductDetailsPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-2xl shadow-lg">
         <div className="w-full">
           <img
-            src={`http://localhost:8080${product.imageUrl}`}
+            src={`${import.meta.env.VITE_API_URL}${product.imageUrl}`}
             alt={product.name}
             className="w-full h-[400px] object-contain rounded-xl border"
           />
@@ -163,7 +163,7 @@ const ProductDetailsPage = () => {
                   className="bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer p-4"
                 >
                   <img
-                    src={`http://localhost:8080${item.imageUrl}`}
+                    src={`${import.meta.env.VITE_API_URL}${item.imageUrl}`}
                     alt={item.name}
                     className="w-full aspect-[3/2] object-cover rounded mb-2"
                   />

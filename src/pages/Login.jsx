@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from "../utils/axiosInstance";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,10 +49,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/users/login",
-        formData
-      );
+      const response = await axiosInstance.post("api/users/login", formData);
       const token = response.data.token;
       const role = response.data.role?.toUpperCase();
 
