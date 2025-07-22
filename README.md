@@ -3,6 +3,7 @@
 This is the **frontend** of a full-stack e-commerce web application built using **React.js** and styled with **Tailwind CSS**. It connects to a Spring Boot backend and provides a clean UI for customers, sellers, and admins.
 
 ---
+
 ## 🌐 Live Demo
 
 - 🔗 Frontend: [https://voithu-commerce.vercel.app](https://voithu-commerce.vercel.app)
