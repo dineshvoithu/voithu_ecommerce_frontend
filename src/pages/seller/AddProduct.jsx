@@ -33,12 +33,16 @@ const AddProduct = () => {
     data.append("image", formData.image);
 
     try {
-      await axios.post("http://localhost:8080/api/products/add", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        "https://voithu-ecommerce-backend.onrender.com/api/products/add",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Product added successfully!");
       navigate("/seller-dashboard");
     } catch (error) {

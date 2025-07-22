@@ -19,11 +19,14 @@ const EditProduct = () => {
   // Fetch product by ID
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/products/seller", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get(
+        "https://voithu-ecommerce-backend.onrender.com/api/products/seller",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((res) => {
         const selected = res.data.find((p) => p.id === parseInt(id));
         if (!selected) {
@@ -46,11 +49,15 @@ const EditProduct = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/api/products/${id}`, product, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.put(
+        `https://voithu-ecommerce-backend.onrender.com/api/products/${id}`,
+        product,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Product updated successfully");
       navigate("/seller-dashboard");
     } catch (err) {
